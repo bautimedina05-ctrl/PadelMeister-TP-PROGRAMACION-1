@@ -3,5 +3,16 @@ def reservas():
     for i in range(len(horarios)):
         print(i, horarios[i])
     horario = int(input("seleccione el horario que desea reservar: "))
-    
+    reservados=[]
+    if horario in reservados:
+        print("El horario ya está reservado. Por favor, seleccione otro horario.")
+    else:
+        print("El importe por el horario seleccionado es de: .", precio)
+        x = input("¿Desea reservar este horario? Y=0/N=1: ")
+        if x == "0":
+            reservados.append(horario)
+            print("Su horario ha sido reservado con éxito.")
+        else:
+            print("No se ha realizado ninguna reserva.")
+            
 reservas()
