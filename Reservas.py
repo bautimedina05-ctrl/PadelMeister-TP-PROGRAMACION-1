@@ -4,23 +4,35 @@ def reserva_cancha(reservado, disponible):
         print(i, "- ", disponible[i])
     seleccionada = int(input("Ingrese el numero de horario que desee: "))
     horario = disponible[seleccionada]
-    reservado.insert(seleccionada, horario)
+    reservado.append(horario)
     del disponible[seleccionada]
     return horario
 
-def horarios_canchas():
-    reservado=[]
-    disponible=["16:00","17:00", "18:00","19:00","20:00","21:00","22:00","23:00", "00:00"]
+def nombre_reserva(hora):
+    nombre= input("Ingrese su nombre para registrar su reserva a las "+ hora + " :")
+    return nombre
+    
+
+def alquiler_cancha(matriz,reservado, disponible):
     horario= reserva_cancha(reservado, disponible)
-    print("El horario seleccionado es: " , horario)
-    print("el resto de horarios es: ", disponible)
-    print("el resto de horarios es: ", reservado)
+    nombre= nombre_reserva(horario)
+    matriz.append([horario, "Ocupado", nombre])
+
+def mostrar_reservas(matriz):
+    print("------RESERVAS------")
+    for i in range(len(matriz)):
+        print(matriz[i][0], " | ", matriz[i][1], " | ", matriz[i][2])
     
 
-def alquiler_cancha():
-    matriz=[["Horario", "Estado", "Nombre Reserva"]]
-    horario= horarios_canchas()
+matriz =[["Horario", "Estado", "Nombre Reserva"]]
+reservado=[]
+opcion= 0
+disponible =["16:00","17:00", "18:00","19:00","20:00","21:00","22:00","23:00", "00:00"]
+while opcion != -1:
+    opcion= int(input("ingresa"))
+    if opcion== -1:
+        break
+    else:
+        alquiler_cancha(matriz, reservado, disponible)
+mostrar_reservas(matriz)
     
-
-
-alquiler_cancha()
