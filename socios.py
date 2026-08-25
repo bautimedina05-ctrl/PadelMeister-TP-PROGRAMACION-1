@@ -36,7 +36,7 @@ def modificar_socio():
 
         print("Socio modificado correctamente.")
     else:
-        print("No existe ese socio.")
+        print("Numero de socio no encontrado.")
 
 def eliminar_socio():
     """Elimina un socio del sistema."""
@@ -47,9 +47,16 @@ def eliminar_socio():
         dnis.pop(numero)
         numerodesocios.pop(numero)
 
-        for i in range(len(numerodesocios)):
-            numerodesocios[i] = i
 
         print("Socio eliminado correctamente.")
     else:
-        print("No existe ese número de socio.")
+        print("No encontrado.")
+
+def mostrar_socios():
+    """Muestra la lista de socios registrados."""
+    if socios:
+        print("Lista de socios:")
+        for i in range(len(socios)):
+            print("Número de socio: {numerodesocios[i]}, Nombre: {socios[i]}, DNI: {dnis[i]}")
+    else:
+        print("No hay socios registrados.")
