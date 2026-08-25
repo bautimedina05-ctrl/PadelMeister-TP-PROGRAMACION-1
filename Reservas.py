@@ -1,3 +1,1 @@
-def aura():
-	"""Representa la función de aura."""
-	pass
+# Sistema de ventas
