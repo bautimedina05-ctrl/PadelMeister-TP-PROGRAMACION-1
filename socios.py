@@ -24,6 +24,7 @@ def buscar_socio():
         print("No se encontró ningún socio con ese número.")
 
 def modificar_socio():
+    """Modifica los datos de un socio existente."""
     numero = int(input("Ingrese el número de socio: "))
 
     if numero in numerodesocios:
@@ -38,6 +39,7 @@ def modificar_socio():
         print("No existe ese socio.")
 
 def eliminar_socio():
+    """Elimina un socio del sistema."""
     numero = int(input("Ingrese el número de socio a eliminar: "))
 
     if numero in numerodesocios:
