@@ -107,11 +107,13 @@ def sumar_Puntos_dobles(ranking_dobles):
     return ranking_dobles
 
 def encontrar_Jugador(ranking_individual, jugador):
+    """Verifica si un jugador está registrado en el ranking individual."""
     for i in range(len(ranking_individual)):
         if jugador == ranking_individual[i,0]:
             return True
 
 def encontrar_equipo(ranking_dobles, equipo):
+    """Verifica si un equipo está registrado en el ranking de dobles."""
     for i in range(len(ranking_dobles)):
         if equipo == ranking_dobles[i,0]:
             return True
@@ -128,6 +130,7 @@ def mostrar_ranking(ranking_individual, ranking_dobles):
         print(f"Equipo: {equipo[0]} | Jugadores: {equipo[1]}, {equipo[2]} | Puntos: {equipo[3]}")
 
 def opciones():
+    """asegura que el usuario ingrese una opción válida del menú."""
     opciones = int(input("Seleccione una opción: "))
     while opciones < 1 or opciones > 6:
         print("Opción inválida. Por favor, seleccione una opción válida.")
@@ -135,6 +138,7 @@ def opciones():
     return opciones
 
 def Ranking():
+    """ Función principal que ejecuta el menú de opciones para el ranking de torneos."""
     while True:
         print("\n--- Menú de Opciones ---")
         print("1. Inscribirse en ranking individual")
