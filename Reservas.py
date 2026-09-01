@@ -46,7 +46,7 @@ def alquiler_cancha(matriz1, matriz2, reservado1, reservado2 , disponible1, disp
 
 def mostrar_reservas(matriz):
     """Muestra todas las reservas realizadas en la matriz de reservas."""
-    print("------RESERVAS------")
+    print("------RESERVAS CANCHAS------")
     for i in range(len(matriz)):
         print(matriz[i][0], " | ", matriz[i][1], " | ", matriz[i][2])
 
@@ -65,9 +65,17 @@ def opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, di
     while sel != 2:
         if sel == 0:
             alquiler_cancha(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
-        elif sel== 1:
+        elif sel== 1:  
             mostrar_reservas(matriz1)
+            print("")
             mostrar_reservas(matriz2)
+            volver= int(input("PRESIONE 1 PARA VOLVER: "))
+            while volver != 1:
+                volver= int(input("NUMERO INVALIDO,PRESIONE 1 PARA VOLVER: "))
+            return
+        opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
+
+            
     else:
         presentar_opciones()
     
