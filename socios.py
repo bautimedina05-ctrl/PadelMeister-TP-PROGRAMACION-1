@@ -72,7 +72,7 @@ def mostrar_socios(socios, dnis, numerodesocios):
     else:
         print("No hay socios registrados.")
 
-def menusocios():
+def menusocios(socios, dnis, numerodesocios):
     opcion=0
     """Muestra el menú de opciones para gestionar socios."""
     while opcion!="6":
@@ -103,4 +103,4 @@ def menusocios():
         else:
             print("Opción inválida. Por favor, seleccione una opción válida.")
 
-menusocios()
+menusocios(socios, dnis, numerodesocios)
