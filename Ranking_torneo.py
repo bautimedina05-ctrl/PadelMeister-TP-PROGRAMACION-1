@@ -1,4 +1,4 @@
-from socios.py import socios
+#from socios.py import socios
 ranking_individual = []
 ranking_dobles = []
 
@@ -6,11 +6,13 @@ ranking_dobles = []
 SOCIOS_VALIDOS = ["101", "102", "103", "104", "105"]
 
 
-def socio(socios):
+def socio(socios_validos):
     """Función para ingresar el número de socio y verificar si es válido."""
     nro_socio = input("Ingrese su número de socio: ")
-    while nro_socio not in socios:
+    while nro_socio not in socios_validos:
+        print("---------------------------------------------------------------------------------------")
         print("Número de socio inexistente. Por favor, ingrese un número válido.")
+        print("---------------------------------------------------------------------------------------")
         nro_socio = input("Ingrese su número de socio: ")
     return nro_socio
 
@@ -28,13 +30,18 @@ def Anotar_individual(ranking_individual, socios_validos):
     jugador_socio = socio(socios_validos)
 
     if esta_anotado(ranking_individual, jugador_socio):
+        print("---------------------------------------------------------------------------------------")
         print("Usted ya se encuentra inscripto en el ranking.")
+        print("---------------------------------------------------------------------------------------")
         return ranking_individual
 
     puntos = 0
     # Guardamos [nro_socio, puntos]
     ranking_individual.append([jugador_socio, puntos])
+    print("---------------------------------------------------------------------------------------")
+    print(f"Socio {jugador_socio} inscrito con éxito en el ranking individual.")
     print("¡Inscripción exitosa!")
+    print("---------------------------------------------------------------------------------------")
     return ranking_individual
 
 
@@ -50,11 +57,11 @@ def Nombre_equipo(ranking_dobles, socios_validos):
 
     if esta_anotado(ranking_dobles, nro_socio1) or esta_anotado(ranking_dobles, nro_socio2):
         print("Uno o ambos jugadores ya se encuentran inscriptos en un equipo.")
-    nombre_equipo = input("Ingrese el nombre del equipo: ")
+    equipo = input("Ingrese el nombre del equipo: ")
     puntos = 0
 
     # Guardamos [nombre_equipo, nro_socio1, nro_socio2, puntos]
-    return [nombre_equipo, nro_socio1, nro_socio2, puntos]
+    return [equipo, nro_socio1, nro_socio2, puntos]
 
 
 def Anotar_dobles(ranking_dobles, socios_validos):
@@ -63,7 +70,10 @@ def Anotar_dobles(ranking_dobles, socios_validos):
     print("Para poder inscribirse en un torneo, primero debe ingresar su número de socio.")
     equipo = Nombre_equipo(ranking_dobles, socios_validos)
     ranking_dobles.append(equipo)
+    print("---------------------------------------------------------------------------------------")
+    print(f"Equipo {equipo[0]} inscrito con éxito. Jugadores: {equipo[1]} y {equipo[2]}.")
     print("¡Inscripción exitosa!")
+    print("---------------------------------------------------------------------------------------")
     return ranking_dobles
 
 
@@ -71,9 +81,13 @@ def partido(jugador):
     """Pregunta el resultado del partido para el jugador/equipo."""
     gano = int(input(f"Ingrese 1 si ganó el partido o 0 si perdió ({jugador}): "))
     if gano == 1:
+        print("---------------------------------------------------------------------------------------")
         print(f"¡{jugador} ha ganado el partido!")
+        print("---------------------------------------------------------------------------------------")
     elif gano == 0:
+        print("---------------------------------------------------------------------------------------")
         print(f"¡{jugador} ha perdido el partido!")
+        print("---------------------------------------------------------------------------------------")
     return gano
 
 
@@ -86,9 +100,13 @@ def sumar_puntos(ranking_individual, socios_validos):
             for jugador in ranking_individual:
                 if jugador[0] == nro_socio:
                     jugador[1] += 3
+                    print("---------------------------------------------------------------------------------------")
                     print(f"Se han sumado 3 puntos al socio {nro_socio}.")
+                    print("---------------------------------------------------------------------------------------")
     else:
+        print("---------------------------------------------------------------------------------------")
         print("El socio no está registrado en el ranking individual.")
+        print("---------------------------------------------------------------------------------------")
 
     return ranking_individual
 
@@ -101,34 +119,43 @@ def sumar_Puntos_dobles(ranking_dobles):
             for equipo in ranking_dobles:
                 if equipo[0] == nombre_equipo:
                    equipo[3] += 3
+                   print("---------------------------------------------------------------------------------------")
                    print(f"Se han sumado 3 puntos al equipo {equipo[0]}.")
+                   print("---------------------------------------------------------------------------------------")
     else: 
+        print("---------------------------------------------------------------------------------------")
         print("El equipo no se encuentra registrado en el ranking de dobles.")
+        print("---------------------------------------------------------------------------------------")
 
     return ranking_dobles
 
 def encontrar_Jugador(ranking_individual, jugador):
     """Verifica si un jugador está registrado en el ranking individual."""
     for i in range(len(ranking_individual)):
-        if jugador == ranking_individual[i,0]:
+        if jugador == ranking_individual[i][0]:
             return True
+    return False
 
 def encontrar_equipo(ranking_dobles, equipo):
     """Verifica si un equipo está registrado en el ranking de dobles."""
     for i in range(len(ranking_dobles)):
-        if equipo == ranking_dobles[i,0]:
+        if equipo == ranking_dobles[i][0]:
             return True
+    return False
 
 
 def mostrar_ranking(ranking_individual, ranking_dobles):
     """Muestra la tabla de rankings."""
     print("\n=== RANKING INDIVIDUAL ===")
     for jugador in ranking_individual:
+        
         print(f"Socio: {jugador[0]} | Puntos: {jugador[1]}")
 
     print("\n=== RANKING DOBLES ===")
     for equipo in ranking_dobles:
+        
         print(f"Equipo: {equipo[0]} | Jugadores: {equipo[1]}, {equipo[2]} | Puntos: {equipo[3]}")
+
 
 def opciones():
     """asegura que el usuario ingrese una opción válida del menú."""
