@@ -27,50 +27,72 @@ def agregar_socio(socios, dnis, numerodesocios, estadosocios):
         return socios, dnis, numerodesocios, estadosocios
     dnis.append(dni)
     estadosocios.append("activo")
-    numerodesocio=len(socios)-1
-    while numerorepetido==True:
-        if numerodesocio in numerodesocios:
-            numerodesocio+=1
-        else:
-            numerorepetido=False
+    if len(numerodesocios) == 0:
+        numerodesocio = 0
+    else:
+        numerodesocio = max(numerodesocios) + 1
+
     numerodesocios.append(numerodesocio)
     print("Socio agregado exitosamente. Su " "número de socio es:", numerodesocio)
     return socios, dnis, numerodesocios, estadosocios
-
+def busqueda(numero, lista):
+    """Busqueda secuencial para encontrar el índice de una lista"""
+    for i in range(len(lista)):
+        if lista[i] == numero:
+            return i
 def buscar_socio(socios, dnis, numerodesocios, estadosocios):
     """Busca un socio por su número de socio."""
     numeroodni=int(input("¿Usted desea buscar el socio por numero de socio o por dni? 1. Numero de socio 2. DNI: "))
     if numeroodni == 1:
         numero=int(input("Ingrese el número de socio a buscar: "))
         if numero in numerodesocios:
+            x = busqueda(numero, numerodesocios)
             print("Socio encontrado:")
-            print("Nombre:", socios[numero])
-            print("DNI:", dnis[numero])
-            print("Estado:", estadosocios[numero])
-            return
+            print("Número de socio:", numerodesocios[x])
+            print("Nombre:", socios[x])
+            print("DNI:", dnis[x])
+            print("Estado:", estadosocios[x])
+
         else: 
             print("No se encontró ningún socio con ese número.")
             return
     elif numeroodni == 2:
         dni=input("Ingrese el DNI del socio a buscar: ")
-        for i in range(len(dnis)):
-            if dnis[i] == dni:
-                print("Socio encontrado:")
-                print("Número de socio:", numerodesocios[i])
-                print("Nombre:", socios[i])
-                print("Estado:", estadosocios[i])
-                return
+        if dni in dnis:
+            x = busqueda(dni, dnis)
+            print("Socio encontrado:")
+            print("Número de socio:", numerodesocios[x])
+            print("Nombre:", socios[x])
+            print("DNI:", dnis[x])
+            print("Estado:", estadosocios[x])
+        else:
+            print("No se encontró ningún socio con ese DNI.")
+        return
         
 def modificar_socio(socios, dnis, numerodesocios, estadosocios):
     """Modifica los datos de un socio existente."""
     numero = int(input("Ingrese el número de socio: "))
+    if numero not in numerodesocios:
+        print("Número de socio no encontrado.")
+        return
+    x = busqueda(numero, numerodesocios)
+    print("¿Está seguro de que desea modificar los datos del socio ", socios[x], "?")
+    confirmacion=int(input("1. Sí 2. No: "))
+    if confirmacion==2:
+        print("No se modificaron los datos del socio.")
+        return
 
     if numero in numerodesocios:
+        x=busqueda(numero, numerodesocios)
         nuevo_nombre = input("Ingrese el nuevo nombre: ")
         nuevo_dni = input("Ingrese el nuevo DNI: ")
+        validar=validar_dni(nuevo_dni)
+        if validar==False:
+            print("El DNI ingresado no es válido. No se puede modificar el socio.")
+            return
 
-        socios[numero] = nuevo_nombre
-        dnis[numero] = nuevo_dni
+        socios[x] = nuevo_nombre
+        dnis[x] = nuevo_dni
 
         print("Socio modificado correctamente.")
     else:
@@ -78,18 +100,22 @@ def modificar_socio(socios, dnis, numerodesocios, estadosocios):
 def estadodelsocio(socios, dnis, numerodesocios, estadosocios):
     """Modifica el estado de un socio a sancionado o inactivo."""
     numero = int(input("Ingrese el número de socio: "))
-    if numero in numerodesocios:
-        print("Ingrese el nuevo estado del socio", socios[numero] , ": ")
+    if numero not in numerodesocios:
+        print("Número de socio no encontrado.")
+        return
+    x = busqueda(numero, numerodesocios)
+    if x is not None:
+        print("Ingrese el nuevo estado del socio", socios[x] , ": ")
         print("1. Activo")
         print("2. Inactivo")
         print("3. Sancionado")
         opcion = input("Seleccione una opción: ")
         if opcion == "1":
-            estadosocios[numero] = "activo"
+            estadosocios[x] = "activo"
         elif opcion == "2":
-            estadosocios[numero] = "inactivo"
+            estadosocios[x] = "inactivo"
         elif opcion == "3":
-            estadosocios[numero] = "sancionado"
+            estadosocios[x] = "sancionado"
         else:
             print("Opción inválida. No se modificó el estado del socio.")
             return
@@ -100,14 +126,16 @@ def estadodelsocio(socios, dnis, numerodesocios, estadosocios):
     else:
         print("Numero de socio no encontrado.")
 
-def eliminar_socio(socios, dnis, numerodesocios):
+def eliminar_socio(socios, dnis, numerodesocios, estadosocios):
     """Elimina un socio del sistema."""
     numero = int(input("Ingrese el número de socio a eliminar: "))
 
     if numero in numerodesocios:
-        socios.pop(numero)
-        dnis.pop(numero)
-        numerodesocios.pop(numero)
+        x = busqueda(numero, numerodesocios)
+        socios.pop(x)
+        dnis.pop(x)
+        numerodesocios.pop(x)
+        estadosocios.pop(x)
 
 
         print("Socio eliminado correctamente.")
@@ -128,7 +156,7 @@ def mostrar_socios(socios, dnis, numerodesocios, estadosocios):
     else:
         print("No hay socios registrados.")
     print("..........................")
-1
+
 def menusocios(socios, dnis, numerodesocios, estadosocios):
     opcion=0
     """Muestra el menú de opciones para gestionar socios."""
@@ -151,7 +179,7 @@ def menusocios(socios, dnis, numerodesocios, estadosocios):
         elif opcion == "2":
             buscar_socio(socios, dnis, numerodesocios, estadosocios)
         elif opcion == "3":
-            modificar_socio(socios, dnis, numerodesocios)
+            modificar_socio(socios, dnis, numerodesocios, estadosocios)
         elif opcion == "4":
             eliminar_socio(socios, dnis, numerodesocios, estadosocios)
         elif opcion == "5":
