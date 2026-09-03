@@ -65,6 +65,7 @@ def mostrar_socios(socios, dnis, numerodesocios):
     if socios:
         print("Lista de socios:")
         for i in range(len(socios)):
+            print("..........................")
             print("Número de socio:", numerodesocios[i])
             print("Nombre:", socios[i])
             print("DNI:", dnis[i])
