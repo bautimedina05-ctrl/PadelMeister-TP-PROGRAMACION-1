@@ -42,9 +42,9 @@ def busqueda(numero, lista):
             return i
 def buscar_socio(socios, dnis, numerodesocios, estadosocios):
     """Busca un socio por su número de socio."""
-    numeroodni=int(input("¿Usted desea buscar el socio por numero de socio o por dni? 1. Numero de socio 2. DNI: "))
+    numeroodni=input("¿Usted desea buscar el socio por numero de socio o por dni? 1. Numero de socio 2. DNI: ")
     if numeroodni == 1:
-        numero=int(input("Ingrese el número de socio a buscar: "))
+        numero=input("Ingrese el número de socio a buscar: ")
         if numero in numerodesocios:
             x = busqueda(numero, numerodesocios)
             print("Socio encontrado:")
@@ -68,20 +68,21 @@ def buscar_socio(socios, dnis, numerodesocios, estadosocios):
         else:
             print("No se encontró ningún socio con ese DNI.")
         return
+    else:
+        print("Opción inválida.")
         
 def modificar_socio(socios, dnis, numerodesocios, estadosocios):
     """Modifica los datos de un socio existente."""
-    numero = int(input("Ingrese el número de socio: "))
+    numero = input("Ingrese el número de socio: ")
     if numero not in numerodesocios:
         print("Número de socio no encontrado.")
         return
     x = busqueda(numero, numerodesocios)
     print("¿Está seguro de que desea modificar los datos del socio ", socios[x], "?")
-    confirmacion=int(input("1. Sí 2. No: "))
+    confirmacion=input("Ingrese cualquier tecla para confirmar o 2 para cancelar: ")
     if confirmacion==2:
         print("No se modificaron los datos del socio.")
         return
-
     if numero in numerodesocios:
         x=busqueda(numero, numerodesocios)
         nuevo_nombre = input("Ingrese el nuevo nombre: ")
@@ -99,7 +100,7 @@ def modificar_socio(socios, dnis, numerodesocios, estadosocios):
         print("Numero de socio no encontrado.")
 def estadodelsocio(socios, dnis, numerodesocios, estadosocios):
     """Modifica el estado de un socio a sancionado o inactivo."""
-    numero = int(input("Ingrese el número de socio: "))
+    numero = input("Ingrese el número de socio: ")
     if numero not in numerodesocios:
         print("Número de socio no encontrado.")
         return
