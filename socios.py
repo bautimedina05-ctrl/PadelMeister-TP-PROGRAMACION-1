@@ -90,6 +90,9 @@ def modificar_socio(socios, dnis, numerodesocios, estadosocios):
         if validar==False:
             print("El DNI ingresado no es válido. No se puede modificar el socio.")
             return
+        if nuevo_dni in dnis and nuevo_dni != dnis[x]:
+            print("El DNI ya está registrado. No se puede modificar el socio.")
+            return
 
         socios[x] = nuevo_nombre
         dnis[x] = nuevo_dni
