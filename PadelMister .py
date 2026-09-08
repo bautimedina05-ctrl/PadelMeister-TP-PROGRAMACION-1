@@ -1,3 +1,7 @@
+import Compras
+import socios
+import Ranking_torneo
+
 #Funciones de Reserva
 
 def numero_cancha():
@@ -76,8 +80,6 @@ def opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, di
             alquiler_cancha(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
         elif sel== 1:
             mostrar_reservas(matriz1, matriz2)
-    presentar_opciones()
-    
 
 
     
@@ -88,23 +90,25 @@ def opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, di
 
 def presentar_opciones():
     """Muestra un menú principal con opciones disponibles para el usuario. Permite al usuario elegir entre diferentes secciones del sistema."""
-    lista= ["Alquiler CANCHA", "TIENDA", "SOCIOS", "TORNEOS", "RANKING"]
-    print("--ELIJA OPCION DESEADA--")
-    for i in range(len(lista)):
-        print(i, "- ", lista[i])
-    sel= int(input("Ingrese el indice de la opcion deseada: "))
-    while sel > 4 or sel < 0:
-        sel= int(input("Opcion No valida, reingrese porfavor: "))
-    if sel == 0:
-        opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
-    elif sel == 1:
-        print("TIENDA")
-    elif sel == 2:
-        print("SOCIOS")
-    elif sel == 3:
-        print("TORNEOS")
-    elif sel == 4:
-        print("RANKING")
+    while True:
+        lista= ["Alquiler CANCHA", "TIENDA", "SOCIOS", "TORNEOS/ RANKING", "SALIR"]
+        print("--ELIJA OPCION DESEADA--")
+        for i in range(len(lista)):
+            print(i, "- ", lista[i])
+        sel= int(input("Ingrese el indice de la opcion deseada: "))
+        while sel > 4 or sel < 0:
+            sel= int(input("Opcion No valida, reingrese porfavor: "))
+        if sel == 0:
+            opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
+        elif sel == 1:
+            Compras.tienda()
+        elif sel == 2:
+            socios.menusocios(socios.socios, socios.dnis, socios.numerodesocios, socios.estadosocios)
+        elif sel == 3:
+            Ranking_torneo.Ranking()
+        elif sel == 4:
+            print("Gracias por utilizar el sistema Padel Meister.")
+            break
 
 
     
