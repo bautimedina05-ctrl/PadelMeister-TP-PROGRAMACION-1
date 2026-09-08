@@ -93,6 +93,7 @@ def presentar_opciones():
     sel= -1
     while sel != 4:
         lista= ["Alquiler CANCHA", "TIENDA", "SOCIOS", "TORNEOS/ RANKING", "SALIR"]
+        print("Bienvenido a PADELMEISTER")
         print("--ELIJA OPCION DESEADA--")
         for i in range(len(lista)):
             print(i, "- ", lista[i])
