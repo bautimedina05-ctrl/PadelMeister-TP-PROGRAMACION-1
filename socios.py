@@ -194,5 +194,3 @@ def menusocios(socios, dnis, numerodesocios, estadosocios):
             break
         else:
             print("Opción inválida. Por favor, seleccione una opción válida.")
-
-menusocios(socios, dnis, numerodesocios, estadosocios)
