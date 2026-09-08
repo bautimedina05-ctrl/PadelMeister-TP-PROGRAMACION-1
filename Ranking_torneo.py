@@ -2,8 +2,8 @@ from socios import socios
 ranking_individual = []
 ranking_dobles = []
 
-# Lista de socios válidos para prueba
-SOCIOS_VALIDOS = ["101", "102", "103", "104", "105"]
+# se importa la lista de socios validos desde el archivo socios.py
+socios_validos = socios
 
 
 def socio(socios_validos):
