@@ -107,21 +107,21 @@ def estadodelsocio(socios, dnis, numerodesocios, estadosocios):
         print("Número de socio no encontrado.")
         return
     x = busqueda(numero, numerodesocios)
-    if x is not None:
-        print("Ingrese el nuevo estado del socio", socios[x] , ": ")
-        print("1. Activo")
-        print("2. Inactivo")
-        print("3. Sancionado")
-        opcion = input("Seleccione una opción: ")
-        if opcion == "1":
-            estadosocios[x] = "activo"
-        elif opcion == "2":
-            estadosocios[x] = "inactivo"
-        elif opcion == "3":
-            estadosocios[x] = "sancionado"
-        else:
-            print("Opción inválida. No se modificó el estado del socio.")
-            return
+
+    print("Ingrese el nuevo estado del socio", socios[x] , ": ")
+    print("1. Activo")
+    print("2. Inactivo")
+    print("3. Sancionado")
+    opcion = input("Seleccione una opción: ")
+    if opcion == "1":
+        estadosocios[x] = "activo"
+    elif opcion == "2":
+        estadosocios[x] = "inactivo"
+    elif opcion == "3":
+        estadosocios[x] = "sancionado"
+    else:
+        print("Opción inválida. No se modificó el estado del socio.")
+        return
         
 
         print("Estado del socio modificado correctamente.")
