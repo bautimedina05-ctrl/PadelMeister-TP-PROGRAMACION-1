@@ -125,9 +125,6 @@ def estadodelsocio(socios, dnis, numerodesocios, estadosocios):
         
 
         print("Estado del socio modificado correctamente.")
-        return estadosocios 
-    else:
-        print("Numero de socio no encontrado.")
 
 def eliminar_socio(socios, dnis, numerodesocios, estadosocios):
     """Elimina un socio del sistema."""
