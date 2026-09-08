@@ -90,7 +90,8 @@ def opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, di
 
 def presentar_opciones():
     """Muestra un menú principal con opciones disponibles para el usuario. Permite al usuario elegir entre diferentes secciones del sistema."""
-    while True:
+    sel= -1
+    while sel != 4:
         lista= ["Alquiler CANCHA", "TIENDA", "SOCIOS", "TORNEOS/ RANKING", "SALIR"]
         print("--ELIJA OPCION DESEADA--")
         for i in range(len(lista)):
