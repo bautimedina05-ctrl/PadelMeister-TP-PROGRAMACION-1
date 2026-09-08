@@ -1,4 +1,4 @@
-from socios.py import socios
+from socios import socios
 ranking_individual = []
 ranking_dobles = []
 
