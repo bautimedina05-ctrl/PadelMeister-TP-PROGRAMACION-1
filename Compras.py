@@ -59,7 +59,7 @@ def modificar_producto(productos):
 def aseguraropcion():
     """Asegurar que el usuario ingrese una opción válida."""
     opcion= int(input("Ingrese la opcion que decida realizar: "))
-    while opcion < 1 or opcion > 5:
+    while opcion < 1 or opcion > 6:
         print("Opción no válida. Por favor, ingrese una opción válida.")
         opcion = int(input("Ingrese la opcion que decida realizar: "))
     return opcion
