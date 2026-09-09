@@ -9,28 +9,37 @@ SOCIOS_VALIDOS = numerodesocios
 
 
 def validar_numero_socio():
-    """Valida que el número de socio ingresado sea numérico entero positivo o cero."""
-    socio = input("Ingrese su número de socio: ")
-    if not re.match(r'^\d+$', socio):
+    """Valida que el número de socio ingresado sea numérico entero positivo, 0 o -1 para salir."""
+    socio = input("Ingrese su número de socio (o -1 para salir): ")
+    # Permite enteros positivos, cero y números negativos (para validar el -1)
+    while not re.match(r'^-?\d+$', socio) or (int(socio) < 0 and int(socio) != -1):
         print("---------------------------------------------------------------------------------------")
-        print("Número de socio inválido. Debe ingresar solo números positivos o 0.")
+        print("Número de socio inválido. Debe ingresar solo números positivos, 0 o -1 para salir.")
         print("---------------------------------------------------------------------------------------")
-    else:
-       return int(socio)
+        socio = input("Ingrese su número de socio (o -1 para salir): ")
+    return int(socio)
 
 
 def socio(socios_validos):
     """Función para ingresar el número de socio y verificar si es válido."""
-    nro_socio = validar_numero_socio()
-    if nro_socio not in socios_validos:
-        print("---------------------------------------------------------------------------------------")
-        print("Número de socio inexistente. Por favor, ingrese un número válido.")
-        print("---------------------------------------------------------------------------------------")
-    else:
-        print("---------------------------------------------------------------------------------------")
-        print(f"Bienvenido, socio {nro_socio}.")
-        print("---------------------------------------------------------------------------------------")
-    return nro_socio
+    while True:
+        nro_socio = validar_numero_socio()
+        
+        if nro_socio == -1:
+            print("---------------------------------------------------------------------------------------")
+            print("Operación cancelada. Volviendo al menú principal.")
+            print("---------------------------------------------------------------------------------------")
+            return None
+            
+        if nro_socio not in socios_validos:
+            print("---------------------------------------------------------------------------------------")
+            print("Número de socio inexistente. Por favor, ingrese un número válido o -1 para salir.")
+            print("---------------------------------------------------------------------------------------")
+        else:
+            print("---------------------------------------------------------------------------------------")
+            print(f"Bienvenido, socio {nro_socio}.")
+            print("---------------------------------------------------------------------------------------")
+            return nro_socio
 
 
 def esta_anotado(anotados, nro_socio):
@@ -52,6 +61,9 @@ def esta_anotado_dobles(ranking_dobles, nro_socio):
 def Anotar_individual(ranking_individual, socios_validos):
     """Inscribe a un jugador en el ranking individual."""
     jugador_socio = socio(socios_validos)
+
+    if jugador_socio is None:
+        return ranking_individual
 
     if esta_anotado(ranking_individual, jugador_socio):
         print("---------------------------------------------------------------------------------------")
@@ -82,8 +94,13 @@ def Nombre_equipo(ranking_dobles, socios_validos):
     """Ingresa el nombre del equipo y verifica socios."""
     print("--- Datos del primer jugador ---")
     nro_socio1 = socio(socios_validos)
+    if nro_socio1 is None:
+        return None
+
     print("--- Datos del segundo jugador ---")
     nro_socio2 = socio(socios_validos)
+    if nro_socio2 is None:
+        return None
     
     if nro_socio1 == nro_socio2:
         print("---------------------------------------------------------------------------------------")
@@ -147,6 +164,9 @@ def sumar_puntos(ranking_individual, socios_validos):
     """Suma 3 puntos en el ranking individual si gana."""
     print("Introduzca su número de socio para modificar el ranking:")
     nro_socio = socio(socios_validos)
+    if nro_socio is None:
+        return ranking_individual
+
     if encontrar_Jugador(ranking_individual, nro_socio) == True:
         if partido(nro_socio) == "1":
             for jugador in ranking_individual:
@@ -244,3 +264,6 @@ def Ranking():
         elif opcion == 6:
             print("Saliendo del programa...")
             break
+
+if __name__ == "__main__":
+    Ranking()
