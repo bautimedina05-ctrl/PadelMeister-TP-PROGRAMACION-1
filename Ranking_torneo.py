@@ -11,12 +11,12 @@ SOCIOS_VALIDOS = numerodesocios
 def validar_numero_socio():
     """Valida que el número de socio ingresado sea numérico entero positivo o cero."""
     socio = input("Ingrese su número de socio: ")
-    while not re.match(r'^\d+$', socio):
+    if not re.match(r'^\d+$', socio):
         print("---------------------------------------------------------------------------------------")
         print("Número de socio inválido. Debe ingresar solo números positivos o 0.")
         print("---------------------------------------------------------------------------------------")
-        socio = input("Ingrese su número de socio: ")
-    return int(socio)
+    else:
+       return int(socio)
 
 
 def socio(socios_validos):
