@@ -22,12 +22,13 @@ def validar_numero_socio():
 def socio(socios_validos):
     """Función para ingresar el número de socio y verificar si es válido."""
     nro_socio = validar_numero_socio()
-    while nro_socio not in socios_validos:
+    if nro_socio not in socios_validos:
         print("---------------------------------------------------------------------------------------")
         print("Número de socio inexistente. Por favor, ingrese un número válido.")
         print("---------------------------------------------------------------------------------------")
         nro_socio = validar_numero_socio()
-    return nro_socio
+    else:
+        return nro_socio
 
 
 def esta_anotado(anotados, nro_socio):
