@@ -121,20 +121,24 @@ def Nombre_equipo(ranking_dobles, socios_validos):
 
 def Anotar_dobles(ranking_dobles, socios_validos):
     """Inscribe a un equipo en el ranking de dobles."""
+
     print("Bienvenido al apartado de torneos de PadelMeister")
     print("Para poder inscribirse en un torneo, primero debe ingresar su número de socio.")
     equipo = Nombre_equipo(ranking_dobles, socios_validos)
+
     if equipo is not None:
         ranking_dobles.append(equipo)
         print("---------------------------------------------------------------------------------------")
         print(f"Equipo {equipo[0]} inscrito con éxito. Jugadores: {equipo[1]} y {equipo[2]}.")
         print("¡Inscripción exitosa!")
         print("---------------------------------------------------------------------------------------")
+
     return ranking_dobles
 
 
 def equipo_existe(ranking_dobles, nombre_equipo):
     """Verifica si un equipo ya existe en el ranking de dobles."""
+
     for equipo in ranking_dobles:
         if equipo[0] == nombre_equipo:
             return True
@@ -143,27 +147,40 @@ def equipo_existe(ranking_dobles, nombre_equipo):
 
 def partido(jugador):
     """Pregunta el resultado del partido para el jugador/equipo."""
-    gano = input(f"Ingrese 1 si ganó el partido o 0 si perdió ({jugador}): ")
-    while not re.match(r'^[01]$', gano):
+
+    gano = input(f"Ingrese 1 si el jugador: {jugador} ganó el partido, 0 si perdio y 2 para cancelar accion:")
+
+    while not re.match(r'^[012]$', gano):
         print("---------------------------------------------------------------------------------------")
-        print("Opción inválida. Por favor, ingrese 1 para ganar o 0 para perder.")
+        print("Opción inválida. Por favor, ingrese 1 para ganar, 0 para perder o 2 para cancelar.")
         print("---------------------------------------------------------------------------------------")
-        gano = input(f"Ingrese 1 si ganó el partido o 0 si perdió ({jugador}): ")
+        gano = input(f"Ingrese 1 si el jugador: {jugador} ganó el partido, 0 si perdio y 2 para cancelar accion:")
+    
     if gano == "1":
         print("---------------------------------------------------------------------------------------")
         print(f"¡{jugador} ha ganado el partido!")
         print("---------------------------------------------------------------------------------------")
+
     elif gano == "0":
         print("---------------------------------------------------------------------------------------")
         print(f"¡{jugador} ha perdido el partido!")
         print("---------------------------------------------------------------------------------------")
+
+    elif gano == "2":
+        print("---------------------------------------------------------------------------------------")
+        print("Operación cancelada. Volviendo al menú principal.")
+        print("---------------------------------------------------------------------------------------")
+
     return gano
 
 
 def sumar_puntos(ranking_individual, socios_validos):
     """Suma 3 puntos en el ranking individual si gana."""
+
     print("Introduzca su número de socio para modificar el ranking:")
+
     nro_socio = socio(socios_validos)
+
     if nro_socio is None:
         return ranking_individual
 
@@ -175,6 +192,7 @@ def sumar_puntos(ranking_individual, socios_validos):
                     print("---------------------------------------------------------------------------------------")
                     print(f"Se han sumado 3 puntos al socio {nro_socio}.")
                     print("---------------------------------------------------------------------------------------")
+
     else:
         print("---------------------------------------------------------------------------------------")
         print("El socio no está registrado en el ranking individual.")
@@ -185,7 +203,9 @@ def sumar_puntos(ranking_individual, socios_validos):
 
 def sumar_Puntos_dobles(ranking_dobles):
     """Suma 3 puntos al equipo en el ranking de dobles si gana."""
+
     nombre_equipo = input("Ingrese el nombre del equipo para modificar el ranking: ")   
+
     if encontrar_equipo(ranking_dobles, nombre_equipo) == True:
         if partido(nombre_equipo) == "1":
             for equipo in ranking_dobles:
@@ -194,6 +214,7 @@ def sumar_Puntos_dobles(ranking_dobles):
                     print("---------------------------------------------------------------------------------------")
                     print(f"Se han sumado 3 puntos al equipo {equipo[0]}.")
                     print("---------------------------------------------------------------------------------------")
+
     else: 
         print("---------------------------------------------------------------------------------------")
         print("El equipo no se encuentra registrado en el ranking de dobles.")
@@ -204,28 +225,43 @@ def sumar_Puntos_dobles(ranking_dobles):
 
 def encontrar_Jugador(ranking_individual, jugador):
     """Verifica si un jugador está registrado en el ranking individual."""
+
     for i in range(len(ranking_individual)):
         if jugador == ranking_individual[i][0]:
             return True
+
     return False
 
 
 def encontrar_equipo(ranking_dobles, equipo):
     """Verifica si un equipo está registrado en el ranking de dobles."""
+
     for i in range(len(ranking_dobles)):
         if equipo == ranking_dobles[i][0]:
             return True
+        
     return False
+
+def ordenar_ranking_Individual(ranking_individual):
+    """Ordena el ranking de mayor a menor según los puntos."""
+    return sorted(ranking_individual, key=lambda x: x[1], reverse=True)
+
+
+def ordenar_ranking_dobles(ranking_dobles):
+    """Ordena el ranking de dobles de mayor a menor según los puntos."""
+    return sorted(ranking_dobles, key=lambda x: x[3], reverse=True)
 
 
 def mostrar_ranking(ranking_individual, ranking_dobles):
     """Muestra la tabla de rankings."""
+    Individual = ordenar_ranking_Individual(ranking_individual)
+    Dobles = ordenar_ranking_dobles(ranking_dobles)
     print("\n=== RANKING INDIVIDUAL ===")
-    for jugador in ranking_individual:
+    for jugador in Individual:
         print(f"Socio: {jugador[0]} | Puntos: {jugador[1]}")
 
     print("\n=== RANKING DOBLES ===")
-    for equipo in ranking_dobles:
+    for equipo in Dobles:
         print(f"Equipo: {equipo[0]} | Jugadores: {equipo[1]}, {equipo[2]} | Puntos: {equipo[3]}")
 
 
