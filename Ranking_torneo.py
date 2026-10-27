@@ -1,21 +1,29 @@
-from socios import numerodesocios
+try:
+    from socios import numerodesocios
+    SOCIOS_VALIDOS = numerodesocios
+except ((ImportError, ModuleNotFoundError)):
+    print("Error: No se pudo importar la lista de socios válidos. Asegúrese de que el archivo 'socios.py' exista y contenga la variable 'numerodesocios'.")
+    SOCIOS_VALIDOS = []
+    
 import re
 
 ranking_individual = []
 ranking_dobles = []
 
-# Se importa la lista numerodesocios directamente desde el archivo socios.py
-SOCIOS_VALIDOS = numerodesocios
 
+def mostrar_alerta(mensaje):
+    """Muestra un mensaje de alerta en la consola."""
+    separador = "-" *90
+    print(separador)
+    print(mensaje)
+    print(separador)
 
 def validar_numero_socio():
     """Valida que el número de socio ingresado sea numérico entero positivo, 0 o -1 para salir."""
     socio = input("Ingrese su número de socio (o -1 para salir): ")
     # Permite enteros positivos, cero y números negativos (para validar el -1)
     while not re.match(r'^-?\d+$', socio) or (int(socio) < 0 and int(socio) != -1):
-        print("---------------------------------------------------------------------------------------")
-        print("Número de socio inválido. Debe ingresar solo números positivos, 0 o -1 para salir.")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta("Número de socio inválido. Debe ingresar solo números positivos, 0 o -1 para salir.")
         socio = input("Ingrese su número de socio (o -1 para salir): ")
     return int(socio)
 
@@ -26,36 +34,24 @@ def socio(socios_validos):
         nro_socio = validar_numero_socio()
         
         if nro_socio == -1:
-            print("---------------------------------------------------------------------------------------")
-            print("Operación cancelada. Volviendo al menú principal.")
-            print("---------------------------------------------------------------------------------------")
+            mostrar_alerta("Operación cancelada. Volviendo al menú principal.")
             return None
             
         if nro_socio not in socios_validos:
-            print("---------------------------------------------------------------------------------------")
-            print("Número de socio inexistente. Por favor, ingrese un número válido o -1 para salir.")
-            print("---------------------------------------------------------------------------------------")
+            mostrar_alerta("Número de socio inexistente. Por favor, ingrese un número válido o -1 para salir.")
         else:
-            print("---------------------------------------------------------------------------------------")
-            print(f"Bienvenido, socio {nro_socio}.")
-            print("---------------------------------------------------------------------------------------")
+            mostrar_alerta(f"Bienvenido, socio {nro_socio}.")
             return nro_socio
 
 
 def esta_anotado(anotados, nro_socio):
     """Verifica si un número de socio ya existe dentro del ranking."""
-    for registro in anotados:
-        if registro[0] == nro_socio:
-            return True
-    return False
+    return any(registro[0] == nro_socio for registro in anotados)
 
 
 def esta_anotado_dobles(ranking_dobles, nro_socio):
     """Verifica si un número de socio ya existe dentro del ranking de dobles."""
-    for equipo in ranking_dobles:
-        if nro_socio == equipo[1] or nro_socio == equipo[2]:
-            return True
-    return False
+    return any(nro_socio in equipo[1:3] for equipo in ranking_dobles)
 
 
 def Anotar_individual(ranking_individual, socios_validos):
@@ -66,9 +62,7 @@ def Anotar_individual(ranking_individual, socios_validos):
         return ranking_individual
 
     if esta_anotado(ranking_individual, jugador_socio):
-        print("---------------------------------------------------------------------------------------")
-        print("Usted ya se encuentra inscripto en el ranking.")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta("Usted ya se encuentra inscripto en el ranking.")
         return ranking_individual
 
     puntos = 0
@@ -103,13 +97,11 @@ def Nombre_equipo(ranking_dobles, socios_validos):
         return None
     
     if nro_socio1 == nro_socio2:
-        print("---------------------------------------------------------------------------------------")
-        print("Los jugadores no pueden ser la misma persona. Por favor, ingrese números de socio diferentes.")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta("Los jugadores no pueden ser la misma persona. Por favor, ingrese números de socio diferentes.")
         return None
 
     if esta_anotado_dobles(ranking_dobles, nro_socio1) or esta_anotado_dobles(ranking_dobles, nro_socio2):
-        print("Uno o ambos jugadores ya se encuentran inscriptos en un equipo.")
+        mostrar_alerta("Uno o ambos jugadores ya se encuentran inscriptos en un equipo.")
         return None
         
     equipo = equiposIguales(ranking_dobles)
@@ -128,10 +120,8 @@ def Anotar_dobles(ranking_dobles, socios_validos):
 
     if equipo is not None:
         ranking_dobles.append(equipo)
-        print("---------------------------------------------------------------------------------------")
-        print(f"Equipo {equipo[0]} inscrito con éxito. Jugadores: {equipo[1]} y {equipo[2]}.")
-        print("¡Inscripción exitosa!")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta(f"Equipo {equipo[0]} inscrito con éxito. Jugadores: {equipo[1]} y {equipo[2]}.")
+        mostrar_alerta("¡Inscripción exitosa!")
 
     return ranking_dobles
 
@@ -139,10 +129,7 @@ def Anotar_dobles(ranking_dobles, socios_validos):
 def equipo_existe(ranking_dobles, nombre_equipo):
     """Verifica si un equipo ya existe en el ranking de dobles."""
 
-    for equipo in ranking_dobles:
-        if equipo[0] == nombre_equipo:
-            return True
-    return False
+    return any(equipo[0] == nombre_equipo for equipo in ranking_dobles)
 
 
 def partido(jugador):
@@ -151,9 +138,7 @@ def partido(jugador):
     gano = input(f"Ingrese 1 si el jugador: {jugador} ganó el partido, 0 si perdio y 2 para cancelar accion:")
 
     while not re.match(r'^[012]$', gano):
-        print("---------------------------------------------------------------------------------------")
-        print("Opción inválida. Por favor, ingrese 1 para ganar, 0 para perder o 2 para cancelar.")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta("Opción inválida. Por favor, ingrese 1 para ganar, 0 para perder o 2 para cancelar.")
         gano = input(f"Ingrese 1 si el jugador: {jugador} ganó el partido, 0 si perdio y 2 para cancelar accion:")
     
     if gano == "1":
@@ -268,7 +253,7 @@ def mostrar_ranking(ranking_individual, ranking_dobles):
 def opciones():
     """Asegura que el usuario ingrese una opción válida del menú."""
     opciones = input("Seleccione una opción: ")
-    while not re.match(r'^[1-6]$', opciones):
+    while not re.match(r'^[1-6]$', str(opciones)):
         print("Opción inválida. Por favor, seleccione una opción válida.")
         opciones = input("Seleccione una opción: ")
     return int(opciones)
