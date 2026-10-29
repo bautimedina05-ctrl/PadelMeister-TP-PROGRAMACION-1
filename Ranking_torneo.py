@@ -1,9 +1,9 @@
 try:
     from socios import numerodesocios
-    SOCIOS_VALIDOS = numerodesocios
+    SOCIOS_VALIDOS = set(numerodesocios)
 except ((ImportError, ModuleNotFoundError)):
     print("Error: No se pudo importar la lista de socios válidos. Asegúrese de que el archivo 'socios.py' exista y contenga la variable 'numerodesocios'.")
-    SOCIOS_VALIDOS = []
+    SOCIOS_VALIDOS = set()
     
 import re
 
@@ -20,13 +20,18 @@ def mostrar_alerta(mensaje):
 
 def validar_numero_socio():
     """Valida que el número de socio ingresado sea numérico entero positivo, 0 o -1 para salir."""
-    socio = input("Ingrese su número de socio (o -1 para salir): ")
-    # Permite enteros positivos, cero y números negativos (para validar el -1)
-    while not re.match(r'^-?\d+$', socio) or (int(socio) < 0 and int(socio) != -1):
-        mostrar_alerta("Número de socio inválido. Debe ingresar solo números positivos, 0 o -1 para salir.")
-        socio = input("Ingrese su número de socio (o -1 para salir): ")
-    return int(socio)
-
+    while True:
+        try:
+            socio = input("Ingrese su número de socio (o -1 para salir): ")
+            if socio == "-1":
+                return -1
+            nro_socio = int(socio)
+            if nro_socio < 0:
+                mostrar_alerta("Número de socio inválido. Debe ingresar solo números positivos, 0 o -1 para salir.")
+            else:
+                return nro_socio
+        except ValueError:
+            mostrar_alerta("Número de socio inválido. Debe ingresar solo números positivos, 0 o -1 para salir.")
 
 def socio(socios_validos):
     """Función para ingresar el número de socio y verificar si es válido."""
@@ -68,10 +73,8 @@ def Anotar_individual(ranking_individual, socios_validos):
     puntos = 0
     # Guardamos [nro_socio, puntos]
     ranking_individual.append([jugador_socio, puntos])
-    print("---------------------------------------------------------------------------------------")
-    print(f"Socio {jugador_socio} inscrito con éxito en el ranking individual.")
-    print("¡Inscripción exitosa!")
-    print("---------------------------------------------------------------------------------------")
+    mostrar_alerta(f"Socio {jugador_socio} inscrito con éxito en el ranking individual.")
+    mostrar_alerta("¡Inscripción exitosa!")
     return ranking_individual
 
 
@@ -114,8 +117,8 @@ def Nombre_equipo(ranking_dobles, socios_validos):
 def Anotar_dobles(ranking_dobles, socios_validos):
     """Inscribe a un equipo en el ranking de dobles."""
 
-    print("Bienvenido al apartado de torneos de PadelMeister")
-    print("Para poder inscribirse en un torneo, primero debe ingresar su número de socio.")
+    mostrar_alerta("Bienvenido al apartado de torneos de PadelMeister")
+    mostrar_alerta("Para poder inscribirse en un torneo, primero debe ingresar su número de socio.")
     equipo = Nombre_equipo(ranking_dobles, socios_validos)
 
     if equipo is not None:
@@ -135,28 +138,24 @@ def equipo_existe(ranking_dobles, nombre_equipo):
 def partido(jugador):
     """Pregunta el resultado del partido para el jugador/equipo."""
 
-    gano = input(f"Ingrese 1 si el jugador: {jugador} ganó el partido, 0 si perdio y 2 para cancelar accion:")
+    while True: 
+        try: 
+            gano = int(input(f"¿Ganó el jugador/equipo {jugador}? (1: Sí, 0: No): "))
+            if gano in [0, 1, 2]:
+                break
+            mostrar_alerta("Opción inválida. Por favor, ingrese 1, 0 o 2.")
+        except ValueError:
+            mostrar_alerta("Error: Debe ingresar obligatoriamente un número entero (0, 1 o 2).")
 
-    while not re.match(r'^[012]$', gano):
-        mostrar_alerta("Opción inválida. Por favor, ingrese 1 para ganar, 0 para perder o 2 para cancelar.")
-        gano = input(f"Ingrese 1 si el jugador: {jugador} ganó el partido, 0 si perdio y 2 para cancelar accion:")
-    
-    if gano == "1":
-        print("---------------------------------------------------------------------------------------")
-        print(f"¡{jugador} ha ganado el partido!")
-        print("---------------------------------------------------------------------------------------")
-
-    elif gano == "0":
-        print("---------------------------------------------------------------------------------------")
-        print(f"¡{jugador} ha perdido el partido!")
-        print("---------------------------------------------------------------------------------------")
-
-    elif gano == "2":
-        print("---------------------------------------------------------------------------------------")
-        print("Operación cancelada. Volviendo al menú principal.")
-        print("---------------------------------------------------------------------------------------")
-
-    return gano
+    if gano == 1:
+        mostrar_alerta(f"¡{jugador} ha ganado el partido!")
+        return "1"
+    elif gano == 0:
+        mostrar_alerta(f"¡{jugador} ha perdido el partido!")
+        return "0"
+    else:
+        mostrar_alerta("Operación cancelada. Volviendo al menú principal.")
+        return "2"
 
 
 def sumar_puntos(ranking_individual, socios_validos):
@@ -174,14 +173,10 @@ def sumar_puntos(ranking_individual, socios_validos):
             for jugador in ranking_individual:
                 if jugador[0] == nro_socio:
                     jugador[1] += 3
-                    print("---------------------------------------------------------------------------------------")
-                    print(f"Se han sumado 3 puntos al socio {nro_socio}.")
-                    print("---------------------------------------------------------------------------------------")
+                    mostrar_alerta(f"Se han sumado 3 puntos al socio {jugador[0]}.")
 
     else:
-        print("---------------------------------------------------------------------------------------")
-        print("El socio no está registrado en el ranking individual.")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta("El socio no está registrado en el ranking individual.")
 
     return ranking_individual
 
@@ -196,14 +191,10 @@ def sumar_Puntos_dobles(ranking_dobles):
             for equipo in ranking_dobles:
                 if equipo[0] == nombre_equipo:
                     equipo[3] += 3
-                    print("---------------------------------------------------------------------------------------")
-                    print(f"Se han sumado 3 puntos al equipo {equipo[0]}.")
-                    print("---------------------------------------------------------------------------------------")
+                    mostrar_alerta(f"Se han sumado 3 puntos al equipo {equipo[0]}.")
 
     else: 
-        print("---------------------------------------------------------------------------------------")
-        print("El equipo no se encuentra registrado en el ranking de dobles.")
-        print("---------------------------------------------------------------------------------------")
+        mostrar_alerta("El equipo no se encuentra registrado en el ranking de dobles.")
 
     return ranking_dobles
 
@@ -251,12 +242,16 @@ def mostrar_ranking(ranking_individual, ranking_dobles):
 
 
 def opciones():
+    
     """Asegura que el usuario ingrese una opción válida del menú."""
-    opciones = input("Seleccione una opción: ")
-    while not re.match(r'^[1-6]$', str(opciones)):
-        print("Opción inválida. Por favor, seleccione una opción válida.")
-        opciones = input("Seleccione una opción: ")
-    return int(opciones)
+    while True:
+        try:
+            opcion = int(input("Seleccione una opción (1-6): "))
+            if 1 <= opcion <= 6:
+                return opcion
+            mostrar_alerta("Opción inválida. Por favor, seleccione un número entre 1 y 6.")
+        except ValueError:
+            print("Error: Debe ingresar un número entero válido.")
 
 
 def Ranking():
