@@ -1,87 +1,105 @@
-def buscar_productos(productos):
-    """Busca productos por código."""
-    codigo = int(input("Ingrese el código del producto a buscar: "))
-    if codigo not in [producto[0] for producto in productos]:
-        print("--------------------------------------------------------")
-        print(" ")
-        print("Producto no encontrado.")
-        print(" ")
-        print("--------------------------------------------------------")
-    else:
-        for i in range(len(productos)):
-            if productos[i][0] == codigo:
-                print("--------------------------------------------------------")
-                print("Producto encontrado:")
-                print(" ")
-                print("codigo"," | ""nombre"," |  ","precio"," | ","cantidad")
-                print(f"{productos[i]}")
-                print(" ")
-                print("--------------------------------------------------------")
+def validar_numeros(mensaje):
+    """Valida que el dato ingresado sea un número entero."""
+    while True:
+        try:
+            dato = int(input(mensaje))
+            if dato > 0:
+                return dato
+        except ValueError:
+            print("Error: Debe ingresar un número entero positivo.")
             
 
-def producto_nuevo():
-    """Crea un nuevo producto."""
-    codigo= int(input("Ingrese el código del producto: "))
-    nombre= input("Ingrese el nombre del producto: ")
-    precio= int(input("Ingrese el precio del producto: "))
-    cant= int(input("Ingrese la cantidad del producto: "))
-    print("Producto agregado exitosamente.")
-    return [codigo, nombre, precio, cant]
 
-def agregar_producto(productos):
-    """Agrega un nuevo producto a la lista de productos."""
-    productos.append(producto_nuevo())
+def buscar_productos(productos):
+    """muestra un producto buscado por codigo."""
+    codigo= validar_numeros("Ingrese el codigo del producto a buscar: ")
+    if codigo in productos:
+        print("-"*60)
+        print("Producto encontrado:")
+        print(" ")
+        print(f"{codigo:<10} {productos[codigo][0]:<20} {productos[codigo][1]:<10} {productos[codigo][2]:<10}")
+        print(" ")
+        print("-"*60)
+    else:
+        print("-"*60)
+        print("Producto no encontrado.")
+        print("-"*60)
+
+def producto_nuevo(productos):
+    """Crea un nuevo producto."""
+    codigo= validar_numeros("Ingrese el código del producto: ")
+    nombre= input("Ingrese el nombre del producto: ")
+    precio= validar_numeros("Ingrese el precio del producto: ")
+    cant= validar_numeros("Ingrese la cantidad del producto: ")
+    print("Producto agregado exitosamente.")
+    productos[codigo] = [nombre, precio, cant]
     return productos
 
 def eliminar_producto(productos):
     codigo = int(input("Ingrese el código del producto a eliminar: "))
-    for i in range(len(productos)):
-        if productos[i][0] == codigo:
-            del productos[i]
-            print("Producto eliminado exitosamente.")
-        else:
-            print("Producto no encontrado.")
+    if codigo in productos:
+        productos.pop(codigo)
+        print("-"*60)
+        print(" ")
+        print("Producto eliminado exitosamente.")
+        print(" ")
+        print("-"*60)
+    else:
+        print("-"*60)
+        print(" ")
+        print("Producto no encontrado.")
+        print(" ")
+        print("-"*60)
     return productos
 
 def modificar_producto(productos):
     codigo = int(input("Ingrese el código del producto a modificar: "))
-    for i in range(len(productos)):
-        if productos[i][0] == codigo:
-            precio= int(input("Ingrese el nuevo precio del producto: "))
-            cant= int(input("Ingrese la nueva cantidad del producto: "))
-            productos[i][2] = precio
-            productos[i][3] = cant
-            print("Producto modificado exitosamente.")
-        else:
-            print("Producto no encontrado.")
+    if codigo in productos:
+        nombre= input(" Ingrese el nombre del producto: ")
+        precio= validar_numeros("Ingrese el precio del producto: ")
+        cant= validar_numeros("Ingrese la cantidad del producto: ")
+        productos[codigo] = [nombre, precio, cant]
+        print("Producto modificado exitosamente.")
+    else:
+        print("Producto no encontrado.")
     return productos
 
 def aseguraropcion():
     """Asegurar que el usuario ingrese una opción válida."""
-    opcion= int(input("Ingrese la opcion que decida realizar: "))
-    while opcion < 1 or opcion > 6:
-        print("Opción no válida. Por favor, ingrese una opción válida.")
-        opcion = int(input("Ingrese la opcion que decida realizar: "))
-    return opcion
+    
+    while True:
+        try:
+            opcion= int(input("Ingrese la opcion que decida realizar: "))
+            if opcion >= 1 and opcion <= 6:
+                return opcion
+            else:
+                raise ValueError
+        except ValueError:
+            print("Opcion invalida. Por favor, ingrese una opcion valida.")
 
 def mostrar_productos(productos):
     """Muestra todos los productos en la lista."""
-    if not productos:
+    if len(productos) == 0:
+        print("-"*60)
         print("No hay productos disponibles.")
+        print("-"*60)
+
     else:
-        print("--------------------------------------------------------")
+        print("-"*60)
         print("Productos disponibles:")
         print(" ")
-        print("codigo"," | ""nombre"," |  ","precio"," | ","cantidad")
-        for producto in productos:
-            print(f"{producto}")
+        print(f"{'codigo':<10} {'nombre':<20} {'precio':<10} {'cantidad':<10}")
+        
+        for codigo, (nombre, precio, cantidad) in productos.items():
+            print(f"{codigo:<10} {nombre:<20} {precio:<10} {cantidad:<10}")
         print(" ")
-        print("--------------------------------------------------------")
+        print("-"*60)
 
-    
+
+
 def tienda():
     """Función principal del programa."""
-    productos =  []
+    productos =  {}
     print("Bienvenido al sistema de compras")
     print("1. Buscar productos por código")
     print("2. Ingresar nuevo producto: ")
@@ -91,12 +109,13 @@ def tienda():
     print("6. Salir del sistema: ")
     opcion= aseguraropcion()
 
+
     while opcion != 6:
 
         if opcion == 1:
             opcion= buscar_productos(productos)
         elif opcion == 2:
-            productos= agregar_producto(productos)
+            productos= producto_nuevo(productos)
         elif opcion == 3:
             opcion= eliminar_producto(productos)
         elif opcion == 4:
@@ -113,5 +132,7 @@ def tienda():
         print("6. Salir del sistema: ")
         opcion= aseguraropcion()
     print("Gracias por utilizar el sistema de compras. ¡Hasta luego!")
+
+tienda()
     
 
