@@ -330,5 +330,3 @@ def menusocios(socios, dnis, numerodesocios, estadosocios, tipodocs):
             importar_datos(socios, dnis, numerodesocios, estadosocios, tipodocs)
         else:
             print("Opción inválida. Por favor, seleccione una opción válida.")
-
-menusocios(socios, dnis, numerodesocios, estadosocios, tipodocs)
