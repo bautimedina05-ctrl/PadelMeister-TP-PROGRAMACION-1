@@ -42,6 +42,8 @@ def buscar_productos(productos):
         print("-"*60)
         print("Producto encontrado:")
         print(" ")
+        print(f"{'codigo':<10} {'nombre':<20} {'precio':<10} {'cantidad':<10}")
+        print(" ")
         print(f"{codigo:<10} {productos[codigo][0]:<20} {productos[codigo][1]:<10} {productos[codigo][2]:<10}")
         print(" ")
         print("-"*60)
@@ -83,7 +85,7 @@ def eliminar_producto(productos):
     return productos
 
 def modificar_producto(productos):
-    codigo = int(input("Ingrese el código del producto a modificar: "))
+    codigo = validar_numeros("Ingrese el código del producto a modificar: ")
     if codigo in productos:
         nombre= input(" Ingrese el nombre del producto: ")
         precio= validar_numeros("Ingrese el precio del producto: ")
@@ -100,7 +102,7 @@ def aseguraropcion():
     
     while True:
         try:
-            opcion= int(input("Ingrese la opcion que decida realizar: "))
+            opcion= validar_numeros("Ingrese la opcion que decida realizar: ")
             if opcion >= 1 and opcion <= 6:
                 return opcion
             else:
