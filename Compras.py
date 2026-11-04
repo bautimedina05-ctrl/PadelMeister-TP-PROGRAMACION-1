@@ -1,3 +1,28 @@
+import json
+
+ARCHIVO= "productos.json"
+
+def cargar_productos():
+    try:
+        archivo= open(ARCHIVO, "r", encoding="utf-8")
+    except FileNotFoundError:
+        return {}
+
+    datos= json.load(archivo)
+    archivo.close()
+
+    productos= {}
+    for codigo in datos:
+        productos[int(codigo)] = datos[codigo]
+    return productos
+
+def guardar_productos(productos):
+    archivo= open(ARCHIVO, "w", encoding="utf-8")
+    json.dump(productos, archivo, indent=4)
+    archivo.close()
+
+
+
 def validar_numeros(mensaje):
     """Valida que el dato ingresado sea un número entero."""
     while True:
@@ -28,17 +53,22 @@ def buscar_productos(productos):
 def producto_nuevo(productos):
     """Crea un nuevo producto."""
     codigo= validar_numeros("Ingrese el código del producto: ")
+    while codigo in productos:
+        print("El código ya existe. No se puede agregar el producto.")
+        codigo= validar_numeros("Ingrese el código del producto: ")
     nombre= input("Ingrese el nombre del producto: ")
     precio= validar_numeros("Ingrese el precio del producto: ")
     cant= validar_numeros("Ingrese la cantidad del producto: ")
     print("Producto agregado exitosamente.")
     productos[codigo] = [nombre, precio, cant]
+    guardar_productos(productos)
     return productos
 
 def eliminar_producto(productos):
-    codigo = int(input("Ingrese el código del producto a eliminar: "))
+    codigo = validar_numeros("Ingrese el código del producto a eliminar: ")
     if codigo in productos:
         productos.pop(codigo)
+        guardar_productos(productos)
         print("-"*60)
         print(" ")
         print("Producto eliminado exitosamente.")
@@ -59,6 +89,7 @@ def modificar_producto(productos):
         precio= validar_numeros("Ingrese el precio del producto: ")
         cant= validar_numeros("Ingrese la cantidad del producto: ")
         productos[codigo] = [nombre, precio, cant]
+        guardar_productos(productos)
         print("Producto modificado exitosamente.")
     else:
         print("Producto no encontrado.")
@@ -99,14 +130,14 @@ def mostrar_productos(productos):
 
 def tienda():
     """Función principal del programa."""
-    productos =  {}
+    productos =  cargar_productos()
     print("Bienvenido al sistema de compras")
     print("1. Buscar productos por código")
-    print("2. Ingresar nuevo producto: ")
-    print("3. Eliminar producto: ")
-    print("4. Modificar producto:")
-    print("5. Mostrar todos los productos: ")
-    print("6. Salir del sistema: ")
+    print("2. Ingresar nuevo producto")
+    print("3. Eliminar producto")
+    print("4. Modificar producto")
+    print("5. Mostrar todos los productos")
+    print("6. Salir del sistema")
     opcion= aseguraropcion()
 
 
@@ -125,14 +156,12 @@ def tienda():
 
         print("Bienvenido al sistema de compras")
         print("1. Buscar productos por código")
-        print("2. Ingresar nuevo producto: ")
-        print("3. Eliminar producto: ")
-        print("4. Modificar producto:")
-        print("5. Mostrar todos los productos: ")
-        print("6. Salir del sistema: ")
+        print("2. Ingresar nuevo producto")
+        print("3. Eliminar producto")
+        print("4. Modificar producto")
+        print("5. Mostrar todos los productos")
+        print("6. Salir del sistema")
         opcion= aseguraropcion()
     print("Gracias por utilizar el sistema de compras. ¡Hasta luego!")
 
 tienda()
-    
-
