@@ -1,15 +1,10 @@
-try:
-    from socios import numerodesocios
-    SOCIOS_VALIDOS = set(numerodesocios)
-except ((ImportError, ModuleNotFoundError)):
-    print("Error: No se pudo importar la lista de socios válidos. Asegúrese de que el archivo 'socios.py' exista y contenga la variable 'numerodesocios'.")
-    SOCIOS_VALIDOS = set()
-    
 import re
+import sys
+import json
+from functools import reduce
 
-ranking_individual = []
-ranking_dobles = []
-
+ARCHIVO_INDIVIDUAL = "ranking_individual.json"
+ARCHIVO_DOBLES = "ranking_dobles.json"
 
 def mostrar_alerta(mensaje):
     """Muestra un mensaje de alerta en la consola."""
@@ -17,6 +12,35 @@ def mostrar_alerta(mensaje):
     print(separador)
     print(mensaje)
     print(separador)
+
+try:
+    from socios import numerodesocios
+    SOCIOS_VALIDOS = set(numerodesocios)
+    if not SOCIOS_VALIDOS:
+        mostrar_alerta("Advertencia: La lista de socios válidos está vacía. Asegúrese de que 'numerodesocios' contenga datos.")
+        sys.exit(1) 
+except ((ImportError, ModuleNotFoundError)):
+    mostrar_alerta("Error: No se pudo importar la lista de socios válidos. Asegúrese de que el archivo 'socios.py' exista y contenga la variable 'numerodesocios'.")
+    sys.exit(1)  # Salir del programa si no se puede importar la lista de socios válidos
+
+
+def cargar_datos(archivo):
+    """Carga los datos desde un archivo JSON."""
+    try:
+        with open(archivo, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except (FileNotFoundError, json.JSONDecodeError):
+        return []
+
+def guardar_datos(archivo, datos):
+    """Guarda los datos en un archivo JSON."""
+    with open(archivo, "w", encoding="utf-8") as f:
+        json.dump(datos, f, indent=4, ensure_ascii=False)
+
+ranking_individual = cargar_datos(ARCHIVO_INDIVIDUAL)
+ranking_dobles = cargar_datos(ARCHIVO_DOBLES)
+
+
 
 def validar_numero_socio():
     """Valida que el número de socio ingresado sea numérico entero positivo, 0 o -1 para salir."""
@@ -51,12 +75,14 @@ def socio(socios_validos):
 
 def esta_anotado(anotados, nro_socio):
     """Verifica si un número de socio ya existe dentro del ranking."""
-    return any(registro[0] == nro_socio for registro in anotados)
+    coincidencias = list(filter(lambda registro: registro[0] == nro_socio, anotados))
+    return len(coincidencias) > 0
 
 
 def esta_anotado_dobles(ranking_dobles, nro_socio):
     """Verifica si un número de socio ya existe dentro del ranking de dobles."""
-    return any(nro_socio in equipo[1:3] for equipo in ranking_dobles)
+    coincidencias = list(filter(lambda equipo: nro_socio in equipo[1:3], ranking_dobles))
+    return len(coincidencias) > 0
 
 
 def Anotar_individual(ranking_individual, socios_validos):
@@ -73,6 +99,7 @@ def Anotar_individual(ranking_individual, socios_validos):
     puntos = 0
     # Guardamos [nro_socio, puntos]
     ranking_individual.append([jugador_socio, puntos])
+    guardar_datos(ARCHIVO_INDIVIDUAL, ranking_individual)
     mostrar_alerta(f"Socio {jugador_socio} inscrito con éxito en el ranking individual.")
     mostrar_alerta("¡Inscripción exitosa!")
     return ranking_individual
@@ -80,10 +107,10 @@ def Anotar_individual(ranking_individual, socios_validos):
 
 def equiposIguales(ranking_dobles):
     """Verifica si un equipo ya existe en el ranking de dobles."""
-    equipo = input("Ingrese el nombre del equipo: ")
+    equipo = input("Ingrese el nombre del equipo: ").strip()
     while encontrar_equipo(ranking_dobles, equipo):
         print("El nombre de equipo ya existe. Elija otro.")
-        equipo = input("Ingrese el nombre del equipo: ")
+        equipo = input("Ingrese el nombre del equipo: ").strip()
     return equipo
 
 
@@ -123,6 +150,7 @@ def Anotar_dobles(ranking_dobles, socios_validos):
 
     if equipo is not None:
         ranking_dobles.append(equipo)
+        guardar_datos(ARCHIVO_DOBLES, ranking_dobles)
         mostrar_alerta(f"Equipo {equipo[0]} inscrito con éxito. Jugadores: {equipo[1]} y {equipo[2]}.")
         mostrar_alerta("¡Inscripción exitosa!")
 
@@ -174,6 +202,7 @@ def sumar_puntos(ranking_individual, socios_validos):
                 if jugador[0] == nro_socio:
                     jugador[1] += 3
                     mostrar_alerta(f"Se han sumado 3 puntos al socio {jugador[0]}.")
+            guardar_datos(ARCHIVO_INDIVIDUAL, ranking_individual)
 
     else:
         mostrar_alerta("El socio no está registrado en el ranking individual.")
@@ -184,15 +213,15 @@ def sumar_puntos(ranking_individual, socios_validos):
 def sumar_Puntos_dobles(ranking_dobles):
     """Suma 3 puntos al equipo en el ranking de dobles si gana."""
 
-    nombre_equipo = input("Ingrese el nombre del equipo para modificar el ranking: ")   
+    nombre_equipo = input("Ingrese el nombre del equipo para modificar el ranking: ").strip()   
 
     if encontrar_equipo(ranking_dobles, nombre_equipo) == True:
         if partido(nombre_equipo) == "1":
             for equipo in ranking_dobles:
-                if equipo[0] == nombre_equipo:
+                if equipo[0].strip().lower() == nombre_equipo.lower():
                     equipo[3] += 3
                     mostrar_alerta(f"Se han sumado 3 puntos al equipo {equipo[0]}.")
-
+            guardar_datos(ARCHIVO_DOBLES, ranking_dobles)
     else: 
         mostrar_alerta("El equipo no se encuentra registrado en el ranking de dobles.")
 
@@ -202,21 +231,15 @@ def sumar_Puntos_dobles(ranking_dobles):
 def encontrar_Jugador(ranking_individual, jugador):
     """Verifica si un jugador está registrado en el ranking individual."""
 
-    for i in range(len(ranking_individual)):
-        if jugador == ranking_individual[i][0]:
-            return True
-
-    return False
+    coincidencias = list(filter(lambda x: x[0] == jugador, ranking_individual))
+    return len(coincidencias) > 0
 
 
 def encontrar_equipo(ranking_dobles, equipo):
     """Verifica si un equipo está registrado en el ranking de dobles."""
-
-    for i in range(len(ranking_dobles)):
-        if equipo == ranking_dobles[i][0]:
-            return True
-        
-    return False
+    equipo_buscado = equipo.strip().lower()
+    resultado = list(filter(lambda x: x[0].strip().lower() == equipo_buscado, ranking_dobles))
+    return len(resultado) > 0
 
 def ordenar_ranking_Individual(ranking_individual):
     """Ordena el ranking de mayor a menor según los puntos."""
@@ -232,14 +255,27 @@ def mostrar_ranking(ranking_individual, ranking_dobles):
     """Muestra la tabla de rankings."""
     Individual = ordenar_ranking_Individual(ranking_individual)
     Dobles = ordenar_ranking_dobles(ranking_dobles)
+
     print("\n=== RANKING INDIVIDUAL ===")
-    for jugador in Individual:
-        print(f"Socio: {jugador[0]} | Puntos: {jugador[1]}")
+    if not Individual:
+        print("No hay jugadores registrados.")
+    else:
+        lineas_individuales = list(map(lambda j: f"Socio: {j[0]} | Puntos: {j[1]}", Individual))
+        for linea in lineas_individuales:
+            print(linea)
 
     print("\n=== RANKING DOBLES ===")
-    for equipo in Dobles:
-        print(f"Equipo: {equipo[0]} | Jugadores: {equipo[1]}, {equipo[2]} | Puntos: {equipo[3]}")
+    if not Dobles:
+        print("No hay equipos registrados.")
+    else:
+        lineas_dobles = list(map(lambda e: f"Equipo: {e[0]} | Jugadores: {e[1]}, {e[2]} | Puntos: {e[3]}", Dobles))
+        for linea in lineas_dobles:
+            print(linea)
 
+
+    if Individual:
+        total_puntos_ind = reduce(lambda acumulador, j: acumulador + j[1], Individual, 0)
+        print(f"\n[Estadística] Total de puntos repartidos en individual: {total_puntos_ind}")
 
 def opciones():
     
@@ -256,6 +292,9 @@ def opciones():
 
 def Ranking():
     """Función principal que ejecuta el menú de opciones para el ranking de torneos."""
+
+    global ranking_individual, ranking_dobles
+
     while True:
         print("\n--- Menú de Opciones ---")
         print("1. Inscribirse en ranking individual")
@@ -268,13 +307,13 @@ def Ranking():
         opcion = opciones()
 
         if opcion == 1:
-            Anotar_individual(ranking_individual, SOCIOS_VALIDOS)
+            ranking_individual = Anotar_individual(ranking_individual, SOCIOS_VALIDOS)
         elif opcion == 2:
-            Anotar_dobles(ranking_dobles, SOCIOS_VALIDOS)
+            ranking_dobles = Anotar_dobles(ranking_dobles, SOCIOS_VALIDOS)
         elif opcion == 3:
-            sumar_puntos(ranking_individual, SOCIOS_VALIDOS)
+            ranking_individual = sumar_puntos(ranking_individual, SOCIOS_VALIDOS)
         elif opcion == 4:
-            sumar_Puntos_dobles(ranking_dobles)
+            ranking_dobles = sumar_Puntos_dobles(ranking_dobles)
         elif opcion == 5:
             mostrar_ranking(ranking_individual, ranking_dobles)
         elif opcion == 6:
