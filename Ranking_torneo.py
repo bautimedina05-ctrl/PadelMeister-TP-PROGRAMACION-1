@@ -1,6 +1,7 @@
 import re
 import sys
 import json
+import importlib 
 from functools import reduce
 
 ARCHIVO_INDIVIDUAL = "ranking_individual.json"
@@ -13,15 +14,23 @@ def mostrar_alerta(mensaje):
     print(mensaje)
     print(separador)
 
-try:
-    from socios import numerodesocios
-    SOCIOS_VALIDOS = set(numerodesocios)
-    if not SOCIOS_VALIDOS:
-        mostrar_alerta("Advertencia: La lista de socios válidos está vacía. Asegúrese de que 'numerodesocios' contenga datos.")
-        sys.exit(1) 
-except ((ImportError, ModuleNotFoundError)):
-    mostrar_alerta("Error: No se pudo importar la lista de socios válidos. Asegúrese de que el archivo 'socios.py' exista y contenga la variable 'numerodesocios'.")
-    sys.exit(1)  # Salir del programa si no se puede importar la lista de socios válidos
+def obtener_socios_validos():
+    """Importa o recarga dinámicamente la lista de socios desde socios.py."""
+    try:
+        import socios
+        # Recargamos el módulo por si fue modificado externamente mientras corre el programa
+        importlib.reload(socios)
+        
+        SOCIOS_VALIDOS = set(int(s) for s in socios.numerodesocios)
+        if not SOCIOS_VALIDOS:
+            mostrar_alerta("Advertencia: La lista de socios válidos está vacía en 'socios.py'.")
+        return SOCIOS_VALIDOS
+    except (ImportError, ModuleNotFoundError):
+        mostrar_alerta("Error: No se pudo importar el archivo 'socios.py' o no contiene la variable 'numerodesocios'.")
+        sys.exit(1)  # Salir del programa si no se puede importar la lista de socios válidos
+
+# Verificación inicial al arrancar el programa
+SOCIOS_VALIDOS = obtener_socios_validos()
 
 
 def cargar_datos(archivo):
@@ -104,14 +113,18 @@ def Anotar_individual(ranking_individual, socios_validos):
     mostrar_alerta("¡Inscripción exitosa!")
     return ranking_individual
 
+def normalizar_nombre_equipo(nombre):
+    """Normaliza el nombre del equipo para evitar duplicados por mayúsculas/minúsculas y espacios."""
+    return re.sub(r'\s+', ' ', nombre.strip().lower())
+
 
 def equiposIguales(ranking_dobles):
     """Verifica si un equipo ya existe en el ranking de dobles."""
-    equipo = input("Ingrese el nombre del equipo: ").strip()
+    equipo = input("Ingrese el nombre del equipo: ").strip().lower()
     while encontrar_equipo(ranking_dobles, equipo):
         print("El nombre de equipo ya existe. Elija otro.")
-        equipo = input("Ingrese el nombre del equipo: ").strip()
-    return equipo
+        equipo = input("Ingrese el nombre del equipo: ").strip().lower()
+    return normalizar_nombre_equipo(equipo)
 
 
 def Nombre_equipo(ranking_dobles, socios_validos):
@@ -177,13 +190,13 @@ def partido(jugador):
 
     if gano == 1:
         mostrar_alerta(f"¡{jugador} ha ganado el partido!")
-        return "1"
+        return 1
     elif gano == 0:
         mostrar_alerta(f"¡{jugador} ha perdido el partido!")
-        return "0"
+        return 0
     else:
         mostrar_alerta("Operación cancelada. Volviendo al menú principal.")
-        return "2"
+        return None
 
 
 def sumar_puntos(ranking_individual, socios_validos):
@@ -197,7 +210,7 @@ def sumar_puntos(ranking_individual, socios_validos):
         return ranking_individual
 
     if encontrar_Jugador(ranking_individual, nro_socio) == True:
-        if partido(nro_socio) == "1":
+        if partido(nro_socio) == 1:
             for jugador in ranking_individual:
                 if jugador[0] == nro_socio:
                     jugador[1] += 3
@@ -216,9 +229,10 @@ def sumar_Puntos_dobles(ranking_dobles):
     nombre_equipo = input("Ingrese el nombre del equipo para modificar el ranking: ").strip()   
 
     if encontrar_equipo(ranking_dobles, nombre_equipo) == True:
-        if partido(nombre_equipo) == "1":
+        if partido(nombre_equipo) == 1:
+            nombre_buscado = normalizar_nombre_equipo(nombre_equipo)
             for equipo in ranking_dobles:
-                if equipo[0].strip().lower() == nombre_equipo.lower():
+                if normalizar_nombre_equipo(equipo[0]) == nombre_buscado:
                     equipo[3] += 3
                     mostrar_alerta(f"Se han sumado 3 puntos al equipo {equipo[0]}.")
             guardar_datos(ARCHIVO_DOBLES, ranking_dobles)
@@ -237,8 +251,8 @@ def encontrar_Jugador(ranking_individual, jugador):
 
 def encontrar_equipo(ranking_dobles, equipo):
     """Verifica si un equipo está registrado en el ranking de dobles."""
-    equipo_buscado = equipo.strip().lower()
-    resultado = list(filter(lambda x: x[0].strip().lower() == equipo_buscado, ranking_dobles))
+    equipo_buscado = normalizar_nombre_equipo(equipo)
+    resultado = list(filter(lambda x: normalizar_nombre_equipo(x[0]) == equipo_buscado, ranking_dobles))
     return len(resultado) > 0
 
 def ordenar_ranking_Individual(ranking_individual):
@@ -277,6 +291,10 @@ def mostrar_ranking(ranking_individual, ranking_dobles):
         total_puntos_ind = reduce(lambda acumulador, j: acumulador + j[1], Individual, 0)
         print(f"\n[Estadística] Total de puntos repartidos en individual: {total_puntos_ind}")
 
+    if Dobles:
+        total_puntos_dob = reduce(lambda acumulador, e: acumulador + e[3], Dobles, 0)
+        print(f"[Estadística] Total de puntos repartidos en dobles: {total_puntos_dob}")
+
 def opciones():
     
     """Asegura que el usuario ingrese una opción válida del menú."""
@@ -305,6 +323,9 @@ def Ranking():
         print("6. Salir")
 
         opcion = opciones()
+
+        global SOCIOS_VALIDOS
+        SOCIOS_VALIDOS = obtener_socios_validos()
 
         if opcion == 1:
             ranking_individual = Anotar_individual(ranking_individual, SOCIOS_VALIDOS)
