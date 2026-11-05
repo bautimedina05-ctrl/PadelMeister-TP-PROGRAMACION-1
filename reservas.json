@@ -1,0 +1,42 @@
+[
+    {
+        "nombre": "ju",
+        "cancha": 1,
+        "horario": "17:00"
+    },
+    {
+        "nombre": "po",
+        "cancha": 1,
+        "horario": "16:00"
+    },
+    {
+        "nombre": "lo",
+        "cancha": 2,
+        "horario": "17:00"
+    },
+    {
+        "nombre": "csc",
+        "cancha": 1,
+        "horario": "19:00"
+    },
+    {
+        "nombre": "knkn",
+        "cancha": 1,
+        "horario": "20:00"
+    },
+    {
+        "nombre": "fae",
+        "cancha": 1,
+        "horario": "23:00"
+    },
+    {
+        "nombre": "re",
+        "cancha": 2,
+        "horario": "20:00"
+    },
+    {
+        "nombre": "jij",
+        "cancha": 1,
+        "horario": "00:00"
+    }
+]
