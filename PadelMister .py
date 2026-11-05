@@ -1,30 +1,44 @@
 import Compras
 import socios
 import Ranking_torneo
+from reservas_cancha import HORARIOS, crear_reserva, conjunto_ocupados, horario_esta_libre, horarios_libres, cargar_reservas, guardar_reservas
+
+#Historiales 
+
+def registrar_historial(reserva):
+    archivo = open("historial.txt", "a")
+    archivo.write("cancha" + str(reserva["cancha"]) + " | " + reserva["horario"] + " | " + reserva["nombre"] + "write")
+    archivo.close()
+
+def leer_historial():
+    try:
+        archivo= open("historial.txt", "r")
+        for linea in archivo:
+            print(linea.strip())
+        archivo.close()
+    except FileNotFoundError:
+        print("No hay historial Todavia")
+
 
 #Funciones de Reserva
+def pedir_entero(mensaje):
+    """Pide un numero entero por teclado y repite hasta que sea valido"""
+    while True:
+        try:
+            return int(input(mensaje))
+        except ValueError:
+            print("Debe ingresar un numero entero, intente de nuevo")
+
 
 def numero_cancha():
     """Permite seleccionar la cancha a la que se desea alquilar"""
-    canchas=[0,1, 2]
-    for i in range(1,3):
-            print(i, "- Cancha", canchas[i])
-    seleccionada = int(input("Ingrese el numero de horario que desee: "))
+    print("1 - Cancha 1")
+    print("2 - Cancha 2")
+    seleccionada= pedir_entero("Ingrese el numero de cancha que desee: ")
+    while seleccionada < 1 or seleccionada > 2:
+        seleccionada= pedir_entero("Cancha no Valida, Reingrese: ")
     return seleccionada
 
-
-def reserva_cancha(reservado, disponible):
-    """Permite seleccionar un horario disponible para reservar una cancha. Muestra los horarios libres, recibe la elección del usuario, agrega el horario seleccionado a la lista de reservados, lo elimina de la lista de disponibles y devuelve el horario elegido."""
-    print("Los horarios disponibles para su reserva son: ")
-    for i in range(len(disponible)):
-        print(i, "- ", disponible[i])
-    seleccionada = int(input("Ingrese el numero de horario que desee: "))
-    while (seleccionada+1) > len(disponible):
-        seleccionada = int(input("Horario no Disponible, Reingrese: "))
-    horario = disponible[seleccionada]
-    reservado.append(horario)
-    del disponible[seleccionada]
-    return horario
 
 def nombre_reserva(hora):
     """Permite ingresar el nombre del usuario para registrar su reserva."""
@@ -32,54 +46,62 @@ def nombre_reserva(hora):
     return nombre
     
 
-def alquiler_cancha(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2):
-    """Permite realizar una reserva de cancha. Llama a las funciones reserva_cancha y nombre_reserva para obtener el horario y el nombre del usuario, y luego agrega esta información a la matriz de reservas."""
-    cancha= numero_cancha()
-    if cancha == 1:
-        horario= reserva_cancha(reservado1, disponible1)
-    elif cancha == 2:
-        horario= reserva_cancha(reservado2, disponible2)
+def alquiler_cancha(reservas):
+    cancha = numero_cancha()
+    libres= horarios_libres(reservas, cancha)
+    if len(libres)== 0:
+        print("No quedan horarios disponibles en esta cancha")
+        return
+    print("Los horarios disponibles son:")
+    for i in range(len(libres)):
+        print(i, "- ", libres[i])
+    seleccionada= pedir_entero("Ingrese el numero de horario que desee: ")
+    while seleccionada < 0 or seleccionada >= len(libres):
+        seleccionada= pedir_entero("Horario no disponible, Reingrese: ")
+    horario= libres[seleccionada]
     nombre= nombre_reserva(horario)
-    if cancha == 1:
-        matriz1.append([horario, "Ocupado", nombre])
-    elif cancha== 2:
-        matriz2.append([horario, "Ocupado", nombre])
-    return
+    reserva = crear_reserva(nombre,cancha,horario)
+    reservas.append(reserva)
+    return reserva
+
+        
 
 
 #Mostrar alquileres
 
-def mostrar_reservas(matriz1 , matriz2):
+def mostrar_reservas(reservas):
     """Muestra todas las reservas realizadas en la matriz de reservas."""
     print("------RESERVAS CANCHAS------")
-    print("Cancha 1: ")
-    for i in range(len(matriz1)):
-        print(matriz1[i][0], " | ", matriz1[i][1], " | ", matriz1[i][2])
-    print("")
-    print("Cancha 2: ")
-    for i in range(len(matriz2)):
-            print(matriz2[i][0], " | ", matriz2[i][1], " | ", matriz2[i][2])
+    if len(reservas)== 0:
+        print("Todavia no Hay reservas.")
+    for reserva in reservas:
+        print("cancha " , reserva["cancha"], " | ", reserva["horario"], " | ", reserva["nombre"])
    
 
 
 
 #Opciones ALQUILER
 
-def opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2):
+def opciones_alquiler(reservas):
     """Muestra un menú de opciones relacionadas con el alquiler de canchas. Permite al usuario elegir entre agregar un alquiler, ver las reservas existentes o volver al menú principal."""
     sel= -1
-    lista= ["Agregar Alquiler", "Reservas", "Volver Atras"]
-    while sel != 2:
+    lista= ["Agregar Alquiler", "Reservas", "Historial", "Volver Atras"]
+    while sel != 3:
         print("--ELIJA OPCION DESEADA--")
         for i in range(len(lista)):
             print(i, "- ", lista[i])
-        sel = int(input("Ingrese el indice de la opcion deseada: "))
-        while sel > 2 and sel <0:
-            sel= int(input("Opcion no valida, reingrese porfavor: "))
+        sel = pedir_entero("Ingrese el indice de la opcion deseada: ")
+        while sel > 3 or sel <0:
+            sel= pedir_entero("Opcion no valida, reingrese porfavor: ")
         if sel == 0:
-            alquiler_cancha(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
+            reserva = alquiler_cancha(reservas)
+            if reserva is not None:
+                guardar_reservas(reservas)
+                registrar_historial(reserva)   
         elif sel== 1:
-            mostrar_reservas(matriz1, matriz2)
+            mostrar_reservas(reservas)
+        elif sel == 2:
+            leer_historial()
 
 
     
@@ -88,7 +110,7 @@ def opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, di
 
 #Funciones Menu
 
-def presentar_opciones():
+def presentar_opciones(reservas):
     """Muestra un menú principal con opciones disponibles para el usuario. Permite al usuario elegir entre diferentes secciones del sistema."""
     sel= -1
     while sel != 4:
@@ -97,15 +119,15 @@ def presentar_opciones():
         print("--ELIJA OPCION DESEADA--")
         for i in range(len(lista)):
             print(i, "- ", lista[i])
-        sel= int(input("Ingrese el indice de la opcion deseada: "))
+        sel= pedir_entero("Ingrese el indice de la opcion deseada: ")
         while sel > 4 or sel < 0:
-            sel= int(input("Opcion No valida, reingrese porfavor: "))
+            sel= pedir_entero("Opcion No valida, reingrese porfavor: ")
         if sel == 0:
-            opciones_alquiler(matriz1, matriz2, reservado1, reservado2 , disponible1, disponible2)
+            opciones_alquiler(reservas)
         elif sel == 1:
             Compras.tienda()
         elif sel == 2:
-            socios.menusocios(socios.socios, socios.dnis, socios.numerodesocios, socios.estadosocios)
+            socios.menusocios(socios.socios, socios.dnis, socios.numerodesocios, socios.estadosocios, socios.tipodocs)
         elif sel == 3:
             Ranking_torneo.Ranking()
         elif sel == 4:
@@ -118,12 +140,5 @@ def presentar_opciones():
 
     
 #PRINCIPAL
-matriz1 =[["Horario", "Estado", "Nombre Reserva"]]
-matriz2 =[["Horario", "Estado", "Nombre Reserva"]]
-reservado1=[]
-reservado2=[]
-opcion= 0
-disponible1 =["16:00","17:00", "18:00","19:00","20:00","21:00","22:00","23:00", "00:00"]
-disponible2 =["16:00","17:00", "18:00","19:00","20:00","21:00","22:00","23:00", "00:00"]
-
-opcionmain= presentar_opciones()
+reservas= cargar_reservas()
+presentar_opciones(reservas)

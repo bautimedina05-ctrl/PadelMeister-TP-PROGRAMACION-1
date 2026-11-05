@@ -1,0 +1,2 @@
+0,Bruce Wayne,DNI,23569889,activo
+1,K Mbappe,Pasaporte,AA678321,activo
