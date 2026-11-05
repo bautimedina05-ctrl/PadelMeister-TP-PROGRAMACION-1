@@ -105,7 +105,7 @@ def presentar_opciones():
         elif sel == 1:
             Compras.tienda()
         elif sel == 2:
-            socios.menusocios(socios.socios, socios.dnis, socios.numerodesocios, socios.estadosocios)
+            socios.menusocios(socios.socios, socios.dnis, socios.numerodesocios, socios.estadosocios, socios.tipodocs)
         elif sel == 3:
             Ranking_torneo.Ranking()
         elif sel == 4:

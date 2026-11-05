@@ -327,6 +327,12 @@ def menusocios(socios, dnis, numerodesocios, estadosocios, tipodocs):
             else:
                 print("No se guardaron los datos.")
         elif opcion == "0":
-            importar_datos(socios, dnis, numerodesocios, estadosocios, tipodocs)
+            print("Al importar los datos, los datos actuales se sobrescribirán. ¿Desea continuar?")
+            cont = input("0. no importar 1. importar: ")
+            if cont == "1":
+                importar_datos(socios, dnis, numerodesocios, estadosocios, tipodocs)
+            else:
+                print("No se importaron los datos.")
+            
         else:
             print("Opción inválida. Por favor, seleccione una opción válida.")

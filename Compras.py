@@ -166,4 +166,3 @@ def tienda():
         opcion= aseguraropcion()
     print("Gracias por utilizar el sistema de compras. ¡Hasta luego!")
 
-tienda()
