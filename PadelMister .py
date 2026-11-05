@@ -3,8 +3,6 @@ import socios
 import Ranking_torneo
 from reservas_cancha import HORARIOS, crear_reserva, conjunto_ocupados, horario_esta_libre, horarios_libres, cargar_reservas, guardar_reservas
 
-HORARIOS = ("16:00","17:00", "18:00","19:00","20:00","21:00","22:00","23:00", "00:00")
-
 #Historiales 
 
 def registrar_historial(reserva):
