@@ -165,4 +165,3 @@ def tienda():
         print("6. Salir del sistema")
         opcion= aseguraropcion()
     print("Gracias por utilizar el sistema de compras. ¡Hasta luego!")
-
